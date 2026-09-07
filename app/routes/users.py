@@ -4,7 +4,7 @@ from sqlmodel import Session
 from app.database import get_session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse
-from app.security import hash_password
+from app.security.password import hash_password
 from sqlmodel import select
 from fastapi import Depends, HTTPException, status
 

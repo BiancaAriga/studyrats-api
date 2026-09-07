@@ -4,7 +4,8 @@ from sqlmodel import Session, select
 from app.database import get_session
 from app.models.user import User
 from app.schemas.user import UserLogin
-from app.security import verify_password
+from app.security.password import verify_password
+from app.security.jwt import create_access_token
 
 router = APIRouter(
     prefix="/auth",
@@ -35,4 +36,11 @@ def login(
             detail="Email ou senha inválidos.",
         )
 
-    return {"message": "Login realizado com sucesso."}
+    access_token = create_access_token(
+        {"sub": str(user.id)}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+    }
