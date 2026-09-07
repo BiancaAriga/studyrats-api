@@ -14,3 +14,7 @@ class UserResponse(BaseModel):
     name: str
     email: str
     created_at: datetime
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)
