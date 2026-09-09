@@ -9,6 +9,7 @@ from app.schemas.study_session import (
     StudySessionResponse,
     StudySessionUpdate,
 )
+from app.security.dependencies import get_current_user
 
 router = APIRouter(
     prefix="/study-sessions",
@@ -26,17 +27,11 @@ router = APIRouter(
 def create_study_session(
     session_data: StudySessionCreate,
     session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
-    user = session.get(User, session_data.user_id)
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuário não encontrado.",
-        )
 
     study_session = StudySession(
-        user_id=session_data.user_id,
+        user_id=current_user.id,
         subject=session_data.subject,
         duration=session_data.duration,
     )
@@ -55,9 +50,13 @@ def create_study_session(
 )
 def get_study_sessions(
     session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
+
     study_sessions = session.exec(
-        select(StudySession)
+        select(StudySession).where(
+            StudySession.user_id == current_user.id
+        )
     ).all()
 
     return study_sessions
@@ -71,6 +70,7 @@ def get_study_sessions(
 def get_study_session(
     session_id: int,
     session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
     study_session = session.get(StudySession, session_id)
 
@@ -78,6 +78,12 @@ def get_study_session(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Sessão de estudo não encontrada.",
+        )
+
+    if study_session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para acessar esta sessão.",
         )
 
     return study_session
@@ -92,6 +98,7 @@ def update_study_session(
     session_id: int,
     session_data: StudySessionUpdate,
     session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
     study_session = session.get(StudySession, session_id)
 
@@ -99,6 +106,12 @@ def update_study_session(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Sessão de estudo não encontrada.",
+        )
+    
+    if study_session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para editar esta sessão.",
         )
 
     if session_data.subject is not None:
@@ -122,6 +135,7 @@ def update_study_session(
 def delete_study_session(
     session_id: int,
     session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
     study_session = session.get(StudySession, session_id)
 
@@ -129,6 +143,12 @@ def delete_study_session(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Sessão de estudo não encontrada.",
+        )
+
+    if study_session.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para excluir esta sessão.",
         )
 
     session.delete(study_session)

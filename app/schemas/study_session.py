@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 
 
 class StudySessionCreate(BaseModel):
-    user_id: int
     subject: str = Field(min_length=1, max_length=100)
     duration: int = Field(gt=0, le=1440)
 
