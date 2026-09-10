@@ -1,18 +1,17 @@
 import jwt
 
-SECRET_KEY = "chave-secreta"
-ALGORITHM = "HS256"
+from app.config.settings import settings
 
 def create_access_token(data: dict) -> str:
     return jwt.encode(
         data,
-        SECRET_KEY,
-        algorithm=ALGORITHM,
+        settings.secret_key,
+        algorithm=settings.algorithm,
     )
 
 def decode_access_token(token: str) -> dict:
     return jwt.decode(
         token,
-        SECRET_KEY,
-        algorithms=[ALGORITHM],
+        settings.secret_key,
+        algorithms=[settings.algorithm],
     )
