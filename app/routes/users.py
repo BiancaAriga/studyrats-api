@@ -30,7 +30,7 @@ def create_user(
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Email já cadastrado.",
+            detail="Não foi possível criar a conta. Verifique os dados informados.",
         )
 
     user = User(
