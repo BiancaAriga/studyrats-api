@@ -3,7 +3,8 @@ from sqlmodel import Session, select
 
 from app.database import get_session
 from app.models.user import User
-from app.schemas.user import UserLogin
+from app.schemas.user import UserLogin, UserResponse
+from app.security.auth import get_current_user
 from app.security.password import verify_password
 from app.security.jwt import create_access_token
 
@@ -44,3 +45,7 @@ def login(
         "access_token": access_token,
         "token_type": "bearer",
     }
+
+@router.get("/me", response_model=UserResponse)
+def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
