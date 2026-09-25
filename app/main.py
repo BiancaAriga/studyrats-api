@@ -7,6 +7,7 @@ from app.routes.users import router as users_router
 from app.routes.auth import router as auth_router
 from app.routes.study_sessions import router as study_sessions_router
 from app.routes.quotes import router as quotes_router
+from app.routes.ranking import router as ranking_router
 
 app = FastAPI(
     title="StudyRats API",
@@ -30,3 +31,4 @@ app.include_router(users_router)
 app.include_router(auth_router)
 app.include_router(study_sessions_router)
 app.include_router(quotes_router)
+app.include_router(ranking_router)
