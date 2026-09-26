@@ -168,7 +168,7 @@ docker build -t studyrats-api .
 #### Executar o container
 
 ```bash
-docker run --env-file .env -p 8000:8000 studyrats-api
+docker run -d --env-file .env -p 8000:8000 --name studyrats-api studyrats-api
 ```
 
 A API estará disponível em:
