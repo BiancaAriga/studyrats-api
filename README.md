@@ -84,6 +84,7 @@ Para executar o projeto localmente, é necessário ter instalado:
 Para executar utilizando Docker:
 
 * Docker Desktop
+* Git
 
 ---
 
